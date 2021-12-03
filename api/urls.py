@@ -13,5 +13,9 @@ router.register(r'company', CompanyViewSet, basename='company')
 urlpatterns = router.urls
 
 urlpatterns = [
+  path('company/<str:pk>/pivottable/', CompanyPivotTableApiView.as_view()),
+  path('company/<str:pk>/raw/', CompanyRawApiView.as_view()),
 ]
-urlpatterns = router.urls
+urlpatterns += router.urls
+
+print(urlpatterns)

@@ -5,7 +5,7 @@ docker/persistance/
 *.db
 *localsettings.py
 node_modules/
-**csv_data/
+**company_data/
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

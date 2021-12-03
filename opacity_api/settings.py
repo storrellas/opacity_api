@@ -131,3 +131,6 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+COMPANY_DATA =  os.path.join(BASE_DIR, os.getenv('COMPANY_DATA', 'company_data') )
+
