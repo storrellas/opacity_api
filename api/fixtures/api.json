@@ -1,0 +1,44 @@
+[
+{
+  "model": "api.company",
+  "pk": "11d75f89-7763-4414-a646-22d4fbe699bc",
+  "fields": {
+    "created_at": "2021-12-03T08:11:00.408Z",
+    "updated_at": "2021-12-03T08:11:00.408Z",
+    "name": "Test",
+    "ref": "Amazon_PPC_visualization_-_Advertised_Product.csv",
+    "mappings": {
+      "date": [
+        "Date"
+      ],
+      "values": [
+        "Clicks",
+        "Impressions",
+        "Cost Per Click (CPC)",
+        "Click-Thru Rate (CTR)",
+        "Spend",
+        "7 Day Total Sales ",
+        "7 Day Other SKU Sales ",
+        "Total Advertising Cost of Sales (ACoS) ",
+        "7 Day Total Orders (#)",
+        "7 Day Conversion Rate",
+        "Total Return on Advertising Spend (RoAS)"
+      ],
+      "unmapped": [
+        "7 Day Total Units (#)",
+        "7 Day Advertised SKU Units (#)",
+        "7 Day Other SKU Units (#)",
+        "7 Day Advertised SKU Sales "
+      ],
+      "commonDenominators": [
+        "Currency",
+        "Ad Group Name",
+        "Portfolio name",
+        "Advertised SKU",
+        "Campaign Name",
+        "Advertised ASIN"
+      ]
+    }
+  }
+}
+]

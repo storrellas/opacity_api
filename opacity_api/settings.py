@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-h&a=&hd*#7+1sxn+c!_-*0zr06$7r0t=0d(0aolzeg7f4qm1pn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -72,6 +72,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'opacity_api.wsgi.application'
 
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
