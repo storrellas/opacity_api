@@ -15,7 +15,9 @@ urlpatterns = router.urls
 urlpatterns = [
   path('company/<str:pk>/pivottable/', CompanyPivotTableApiView.as_view()),
   path('company/<str:pk>/raw/', CompanyRawApiView.as_view()),
+  path('company/<str:pk>/import/', CompanyImportView.as_view()),
+  
 ]
 urlpatterns += router.urls
 
-print(urlpatterns)
+

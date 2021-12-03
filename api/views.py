@@ -9,8 +9,12 @@ from django.shortcuts import render
 from django.conf import settings
 
 # DRF imports
-from rest_framework import views, viewsets, serializers
+from rest_framework import views, viewsets, serializers, exceptions
 from rest_framework.response import Response
+
+# Upload file
+from rest_framework.parsers import MultiPartParser
+from rest_framework.decorators import parser_classes
 
 # Models
 from .models import Company
@@ -60,9 +64,26 @@ class CompanyRawApiView(views.APIView):
     file_path = os.path.join(settings.COMPANY_DATA, company.ref)
     df = pd.read_csv(file_path, parse_dates=["Date"])
 
-
     df = df.fillna(0)
     # Subset number of rows
     ret = df.loc[1:10]
 
     return Response({'message': ret.to_dict()})
+
+
+@parser_classes((MultiPartParser, ))
+class CompanyImportView(views.APIView):
+  def post(self, request, pk, format=None):
+    company = Company.objects.get(uuid=pk)
+
+    # Check properly parameters
+    file_node = request.FILES.get('data-file')
+    if file_node is None:
+      raise exceptions.ValiationError("Mising 'data-file'")
+
+    # Read content
+    file_node_content = file_node.read()    
+    with open( os.path.join(settings.COMPANY_DATA, company.ref) , "wb") as f:
+      f.write(file_node_content)
+
+    return Response({'message': 'ok'}) 
