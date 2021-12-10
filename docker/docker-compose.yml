@@ -7,6 +7,8 @@ services:
       dockerfile: docker/Dockerfile      
     ports:
       - 127.0.0.1:$API_PORT:8080
+    volumes:
+      - $COMPANY_DATA:/repo/company_data
     environment:
     - DB_HOST=$DB_HOST
     - DB_NAME=$DB_NAME
