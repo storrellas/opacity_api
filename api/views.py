@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.conf import settings
 
 # DRF imports
-from rest_framework import views, viewsets, serializers, exceptions
+from rest_framework import views, viewsets, serializers, exceptions, status
 from rest_framework.response import Response
 
 # Upload file
@@ -62,13 +62,34 @@ class CompanyRawApiView(views.APIView):
   def get(self, request, pk, format=None):
     company = Company.objects.get(uuid=pk)
     file_path = os.path.join(settings.COMPANY_DATA, company.ref)
+
+    # Check whether mappings was created
+    mappings = company.mappings
+    if not mappings['date'] or not mappings['commonDenominators'] or not mappings['values']:
+        return Response({'message': 'No mappings specified'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Read CSV
     df = pd.read_csv(file_path, parse_dates=["Date"])
-
+    # Fill NA values
     df = df.fillna(0)
-    # Subset number of rows
-    ret = df.loc[1:10]
 
-    return Response({'message': ret.to_dict()})
+    # # Subset number of rows
+    # ret = df.loc[1:10]
+
+    # NOTE: /rawData response
+    # return Response({'message': ret.to_dict()})
+
+
+    # NOTE: /company_raw response
+
+    # Treat index as regular column
+    df.reset_index(level=0, inplace=True)
+
+    # Convert to format appropriate for react-data-grid
+    return Response(df.to_dict(orient="records"))
+
+
+
 
 
 @parser_classes((MultiPartParser, ))
