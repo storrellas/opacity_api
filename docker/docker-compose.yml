@@ -1,0 +1,26 @@
+version: "3.7"
+
+services:
+  python:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile      
+    ports:
+      - 127.0.0.1:8080:8080
+    environment:
+    - DB_HOST=db
+    - DB_NAME=opacity
+    - DB_USER=opacity
+    - DB_PASSWORD=opacity
+    - DB_PORT=5432    
+  db:
+    image: postgres
+    volumes:
+      - ./persistance:/var/lib/postgresql/data
+    ports:
+      - 127.0.0.1:5433:5432
+    environment:
+      - POSTGRES_USER=opacity
+      - POSTGRES_PASSWORD=opacity
+      - POSTGRES_DB=opacity
+
