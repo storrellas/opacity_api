@@ -1,0 +1,10 @@
+*venv*
+**/node_modules/
+db.sqlite3
+**/media/
+**/persistance/
+**/persistance_ts/
+**/stuff/history_fixture/
+**/doc/
+**/docker/logs/
+**/docker/persistance*
