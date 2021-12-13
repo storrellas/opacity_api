@@ -88,6 +88,8 @@ class CompanyPivotTableApiView(views.APIView):
     file_path = os.path.join(settings.COMPANY_DATA, company.ref)
     df = pd.read_csv(file_path, parse_dates=["Date"])
 
+    #df = df.fillna(0)
+
     # Define index and values
     pivot_index = [commonDenominator]
     pivot_values = mappings['values']
@@ -172,6 +174,9 @@ class CompanyPivotTableApiView(views.APIView):
 
     # Treat index as regular column
     pivot_table.reset_index(level=0, inplace=True)
+
+    # Replace NaN by None
+    pivot_table = pivot_table.fillna(np.nan).replace([np.nan], [None])
 
     # Convert to format appropriate for react-data-grid
     return Response(pivot_table.to_dict(orient="records"))
