@@ -40,5 +40,28 @@
       ]
     }
   }
+},
+{
+  "model": "api.product",
+  "pk": "2c77df51-3cf5-480d-93b1-a9986ee57426",
+  "fields": {
+    "created_at": "2021-12-14T11:51:52.568Z",
+    "updated_at": "2021-12-14T11:51:52.568Z",
+    "seller_sku": "123",
+    "asin": "123",
+    "name": "123",
+    "listing_id": "123",
+    "status": "123",
+    "variant_type": "123",
+    "category1": "123",
+    "category2": "123",
+    "product_type": "123",
+    "color_size": "123",
+    "custom_label0": "123",
+    "custom_label1": "123",
+    "custom_label2": "123",
+    "custom_label3": "123",
+    "custom_label4": "123"
+  }
 }
 ]

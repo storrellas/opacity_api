@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.forms import widgets
 from django.db.models import JSONField 
 
-from .models import Company
+from .models import Company, Product
 
 logger = logging.getLogger(__name__)
 
@@ -30,3 +30,8 @@ class CompanyAdmin(admin.ModelAdmin):
   formfield_overrides = {
     JSONField: {'widget': PrettyJSONWidget}
   }
+
+# Register your models here.
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+  pass

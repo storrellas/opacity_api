@@ -22,3 +22,26 @@ class Company(BaseModel):
 
     def __str__(self):
         return "%s" % self.name
+
+
+class Product(BaseModel):
+    seller_sku = models.CharField(max_length=100)
+    asin = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    listing_id = models.CharField(max_length=100)
+    status = models.CharField(max_length=100)
+    variant_type = models.CharField(max_length=100)
+    category1 = models.CharField(max_length=100)
+    category2 = models.CharField(max_length=100)
+    product_type = models.CharField(max_length=100)
+    color_size = models.CharField(max_length=100)
+    custom_label0 = models.CharField(max_length=100)
+    custom_label1 = models.CharField(max_length=100)
+    custom_label2 = models.CharField(max_length=100)
+    custom_label3 = models.CharField(max_length=100)
+    custom_label4 = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return "%s" % self.name
+
+
