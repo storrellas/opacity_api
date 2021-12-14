@@ -17,7 +17,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.decorators import parser_classes
 
 # Models
-from .models import Company
+from .models import Company, Product
 
 ###########################
 # Serializers
@@ -28,6 +28,11 @@ class CompanySerializer(serializers.ModelSerializer):
         model = Company
         fields = '__all__'
 
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = '__all__'
+
 ###########################
 # Viewsets
 ###########################
@@ -35,6 +40,10 @@ class CompanySerializer(serializers.ModelSerializer):
 class CompanyViewSet(viewsets.ModelViewSet):
   queryset = Company.objects.all()
   serializer_class = CompanySerializer
+
+class ProductViewSet(viewsets.ModelViewSet):
+  queryset = Product.objects.all()
+  serializer_class = ProductSerializer
 
 class CompanyPivotTableApiView(views.APIView):
 

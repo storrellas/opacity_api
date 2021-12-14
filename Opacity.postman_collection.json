@@ -243,7 +243,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"id\": 1,\r\n    \"commonDenominator\": \"Currency\",\r\n    \"firstDateRange\": {\r\n        \"endDate\": \"12/14/2019\",\r\n        \"startDate\": \"12/01/2019\"\r\n    },\r\n    \"secondDateRange\": {\r\n        \"endDate\": \"12/31/2019\",\r\n        \"startDate\": \"12/15/2019\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"id\": 1,\r\n    \"commonDenominator\": \"Currency\",\r\n    \"firstDateRange\": {\r\n        \"endDate\": \"12/14/2021\",\r\n        \"startDate\": \"12/01/2021\"\r\n    },\r\n    \"secondDateRange\": {\r\n        \"endDate\": \"12/31/2021\",\r\n        \"startDate\": \"12/15/2021\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -372,6 +372,59 @@
 				{
 					"name": "Company",
 					"item": [
+						{
+							"name": "List - CORS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);\r",
+											"postman.setEnvironmentVariable(\"company_uuid\", jsonData[0].uuid);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "OPTIONS",
+								"header": [
+									{
+										"key": "Access-Control-Request-Method",
+										"value": "*",
+										"type": "text"
+									},
+									{
+										"key": "Origin",
+										"value": "http://localhost:3000",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/v2/company/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"v2",
+										"company",
+										""
+									]
+								}
+							},
+							"response": []
+						},
 						{
 							"name": "List",
 							"event": [
@@ -691,7 +744,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"commonDenominator\": \"Currency\",\r\n    \"firstDateRange\": {\r\n        \"endDate\": \"12/14/2019\",\r\n        \"startDate\": \"12/01/2019\"\r\n    },\r\n    \"secondDateRange\": {\r\n        \"endDate\": \"12/31/2019\",\r\n        \"startDate\": \"12/15/2019\"\r\n    }\r\n}",
+									"raw": "{\r\n    \"commonDenominator\": \"Ad Group Name\",\r\n    \"firstDateRange\": {\r\n        \"endDate\": \"12/14/2021\",\r\n        \"startDate\": \"12/01/2021\"\r\n    },\r\n    \"secondDateRange\": {\r\n        \"endDate\": \"12/31/2021\",\r\n        \"startDate\": \"12/15/2021\"\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -815,6 +868,247 @@
 										"company",
 										"{{company_uuid}}",
 										"import",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Product",
+					"item": [
+						{
+							"name": "List",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);\r",
+											"postman.setEnvironmentVariable(\"product_uuid\", jsonData[0].uuid);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token_access}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/v2/product/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"v2",
+										"product",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Retrieve",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token_access}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/v2/product/{{product_uuid}}/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"v2",
+										"product",
+										"{{product_uuid}}",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);\r",
+											"postman.setEnvironmentVariable(\"product_uuid\", jsonData.uuid);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token_access}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"seller_sku\": \"123\",\r\n    \"asin\": \"123\",\r\n    \"name\": \"123\",\r\n    \"listing_id\": \"123\",\r\n    \"status\": \"123\",\r\n    \"variant_type\": \"123\",\r\n    \"category1\": \"123\",\r\n    \"category2\": \"123\",\r\n    \"product_type\": \"123\",\r\n    \"color_size\": \"123\",\r\n    \"custom_label0\": \"123\",\r\n    \"custom_label1\": \"123\",\r\n    \"custom_label2\": \"123\",\r\n    \"custom_label3\": \"123\",\r\n    \"custom_label4\": \"123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/v2/product/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"v2",
+										"product",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);\r",
+											"postman.setEnvironmentVariable(\"company_uuid\", jsonData.uuid);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token_access}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"seller_sku\": \"123\",\r\n    \"asin\": \"123\",\r\n    \"name\": \"123\",\r\n    \"listing_id\": \"123\",\r\n    \"status\": \"123\",\r\n    \"variant_type\": \"123\",\r\n    \"category1\": \"123\",\r\n    \"category2\": \"123\",\r\n    \"product_type\": \"123\",\r\n    \"color_size\": \"123\",\r\n    \"custom_label0\": \"123\",\r\n    \"custom_label1\": \"123\",\r\n    \"custom_label2\": \"123\",\r\n    \"custom_label3\": \"123\",\r\n    \"custom_label4\": \"123\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/v2/product/{{product_uuid}}/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"v2",
+										"product",
+										"{{product_uuid}}",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);\r",
+											"postman.setEnvironmentVariable(\"company_uuid\", jsonData.uuid);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token_access}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/v2/product/{{product_uuid}}/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"v2",
+										"product",
+										"{{product_uuid}}",
 										""
 									]
 								}

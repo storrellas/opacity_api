@@ -10,6 +10,7 @@ from .views import *
 
 router = DefaultRouter()
 router.register(r'company', CompanyViewSet, basename='company')
+router.register(r'product', ProductViewSet, basename='product')
 urlpatterns = router.urls
 
 urlpatterns = [
