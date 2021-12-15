@@ -35,3 +35,4 @@ class CompanyAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
   list_display = ('seller_sku', 'asin', 'listing_id', 'company')
+  ordering = ('seller_sku',)

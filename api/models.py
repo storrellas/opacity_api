@@ -45,6 +45,6 @@ class Product(BaseModel):
     custom_label4 = models.CharField(max_length=100, blank=True, null=True)
     
     def __str__(self):
-        return "%s" % self.name
+        return "%s" % self.seller_sku
 
 

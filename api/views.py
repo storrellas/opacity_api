@@ -47,38 +47,36 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 class CompanyPivotTableApiView(views.APIView):
 
-  def get(self, request, pk, format=None):
-    company = Company.objects.get(uuid=pk)
+  # def get(self, request, pk, format=None):
+  #   company = Company.objects.get(uuid=pk)
 
+  #   # Check whether file is uploaded
+  #   if company.ref is None:
+  #     return Response({'message': 'No file specified'}, status=status.HTTP_400_BAD_REQUEST)
+  #   # Check whether mappings was created
+  #   mappings = company.mappings
+  #   if not mappings['date'] or not mappings['commonDenominators'] or not mappings['values']:
+  #       return Response({'message': 'No mappings specified'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Check whether file is uploaded
-    if company.ref is None:
-      return Response({'message': 'No file specified'}, status=status.HTTP_400_BAD_REQUEST)
-    # Check whether mappings was created
-    mappings = company.mappings
-    if not mappings['date'] or not mappings['commonDenominators'] or not mappings['values']:
-        return Response({'message': 'No mappings specified'}, status=status.HTTP_400_BAD_REQUEST)
+  #   # Read CSV file
+  #   file_path = os.path.join(settings.COMPANY_DATA, company.ref)
+  #   df = pd.read_csv(file_path, parse_dates=["Date"])
 
-    # Read CSV file
-    file_path = os.path.join(settings.COMPANY_DATA, company.ref)
-    df = pd.read_csv(file_path, parse_dates=["Date"])
+  #   df["Date"] = pd.to_datetime(df['Date'])
 
-    df["Date"] = pd.to_datetime(df['Date'])
+  #   # Mask
+  #   start = '12-01-2019'
+  #   end = '12-05-2019'
+  #   mask = (df['Date'] > start) & (df['Date'] <= end)
+  #   df = df.loc[mask]
 
-    # Mask
-    start = '12-01-2019'
-    end = '12-05-2019'
-    mask = (df['Date'] > start) & (df['Date'] <= end)
-    df = df.loc[mask]
-
-    # Create pivot_table
-    table = pd.pivot_table(df, index=['Portfolio name'], values=["Impressions", "Clicks"], dropna=True, fill_value=0,
-                              aggfunc={"Impressions": np.sum,"Clicks": np.sum})
-    return Response(table)
+  #   # Create pivot_table
+  #   table = pd.pivot_table(df, index=['Portfolio name'], values=["Impressions", "Clicks"], dropna=True, fill_value=0,
+  #                             aggfunc={"Impressions": np.sum,"Clicks": np.sum})
+  #   return Response(table)
 
   def post(self, request, pk, format=None):
     company = Company.objects.get(uuid=pk)
-
 
     # Check whether file is uploaded
     if company.ref is None:
@@ -97,7 +95,37 @@ class CompanyPivotTableApiView(views.APIView):
     file_path = os.path.join(settings.COMPANY_DATA, company.ref)
     df = pd.read_csv(file_path, parse_dates=["Date"])
 
-    #df = df.fillna(0)
+    # Programmatically join with products
+    queryset = company.products.all()
+    df['category'] = None
+    df['product_type'] = None
+    df['custom_label'] = None
+    for product in company.products.all().iterator():
+      df.loc[ df['Advertised SKU'] == product.seller_sku, 'category'] = product.category1
+      df.loc[ df['Advertised SKU'] == product.seller_sku, 'product_type'] = product.product_type
+      df.loc[ df['Advertised SKU'] == product.seller_sku, 'custom_label'] = product.custom_label0
+
+    # Check items
+    advertised_sku_list = sorted( df['Advertised SKU'].unique() )
+    seller_sku_list = list( queryset.order_by('seller_sku').values_list('seller_sku', flat=True) )
+    print(" ")
+    print("-- advertised_sku_list --")
+    print( advertised_sku_list )
+    print(" ")
+    print('-- seller_sku --')
+    print( seller_sku_list )
+    print(" ")
+    print("-- intersection --" )
+    print( list(set(advertised_sku_list) & set(seller_sku_list)))
+
+    def difference(list_a, list_b):
+      a = set(list_a)
+      b = set(list_b)
+      c = {element for element in a if element not in b}
+      return c
+    print(" ")
+    print("-- difference --")
+    print( list(difference(advertised_sku_list, seller_sku_list)))
 
     # Define index and values
     pivot_index = [commonDenominator]
