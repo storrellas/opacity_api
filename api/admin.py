@@ -34,4 +34,4 @@ class CompanyAdmin(admin.ModelAdmin):
 # Register your models here.
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-  pass
+  list_display = ('seller_sku', 'asin', 'listing_id', 'company')
