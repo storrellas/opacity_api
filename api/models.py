@@ -25,6 +25,8 @@ class Company(BaseModel):
 
 
 class Product(BaseModel):
+    COMMON_DENOMINATOR_LIST = ['category1', 'product_type', 'custom_label0']
+
     company = models.ForeignKey(Company, related_name='products', 
                                 on_delete=models.SET_NULL, null=True)
     seller_sku = models.CharField(max_length=100, blank=True, null=True)

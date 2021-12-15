@@ -24,6 +24,9 @@ from .models import Company, Product
 ###########################
 
 class CompanySerializer(serializers.ModelSerializer):
+    product_commonDenominators = serializers.SerializerMethodField()
+    def get_product_commonDenominators(self, obj):
+      return Product.COMMON_DENOMINATOR_LIST
     class Meta:
         model = Company
         fields = '__all__'
@@ -97,35 +100,34 @@ class CompanyPivotTableApiView(views.APIView):
 
     # Programmatically join with products
     queryset = company.products.all()
-    df['category'] = None
+    df['category1'] = None
     df['product_type'] = None
-    df['custom_label'] = None
+    df['custom_label0'] = None
     for product in company.products.all().iterator():
-      df.loc[ df['Advertised SKU'] == product.seller_sku, 'category'] = product.category1
-      df.loc[ df['Advertised SKU'] == product.seller_sku, 'product_type'] = product.product_type
-      df.loc[ df['Advertised SKU'] == product.seller_sku, 'custom_label'] = product.custom_label0
+      for cd in Product.COMMON_DENOMINATOR_LIST:
+        df.loc[ df['Advertised SKU'] == product.seller_sku, cd] = getattr(product, cd)
 
-    # Check items
-    advertised_sku_list = sorted( df['Advertised SKU'].unique() )
-    seller_sku_list = list( queryset.order_by('seller_sku').values_list('seller_sku', flat=True) )
-    print(" ")
-    print("-- advertised_sku_list --")
-    print( advertised_sku_list )
-    print(" ")
-    print('-- seller_sku --')
-    print( seller_sku_list )
-    print(" ")
-    print("-- intersection --" )
-    print( list(set(advertised_sku_list) & set(seller_sku_list)))
+    # # Check Stats in items
+    # advertised_sku_list = sorted( df['Advertised SKU'].unique() )
+    # seller_sku_list = list( queryset.order_by('seller_sku').values_list('seller_sku', flat=True) )
+    # print(" ")
+    # print("-- advertised_sku_list --")
+    # print( advertised_sku_list )
+    # print(" ")
+    # print('-- seller_sku --')
+    # print( seller_sku_list )
+    # print(" ")
+    # print("-- intersection --" )
+    # print( list(set(advertised_sku_list) & set(seller_sku_list)))
 
-    def difference(list_a, list_b):
-      a = set(list_a)
-      b = set(list_b)
-      c = {element for element in a if element not in b}
-      return c
-    print(" ")
-    print("-- difference --")
-    print( list(difference(advertised_sku_list, seller_sku_list)))
+    # def difference(list_a, list_b):
+    #   a = set(list_a)
+    #   b = set(list_b)
+    #   c = {element for element in a if element not in b}
+    #   return c
+    # print(" ")
+    # print("-- difference --")
+    # print( list(difference(advertised_sku_list, seller_sku_list)))
 
     # Define index and values
     pivot_index = [commonDenominator]
