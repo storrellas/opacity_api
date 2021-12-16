@@ -192,12 +192,12 @@ class CompanyPivotTableApiView(views.APIView):
     # Rename the columns to indicate date range
     columns = {}
     for value in pivot_values:
-        columns[value] = value + f'\n {start0} to {end0}'
+        columns[value] = value + f' {start0} to {end0}'
     range0_table.rename(columns=columns, inplace=True)
 
     columns = {}
     for value in pivot_values:
-        columns[value] = value + f'\n {start1} to {end1}'
+        columns[value] = value + f' {start1} to {end1}'
     range1_table.rename(columns=columns, inplace=True)
 
     # Concatenate the tables into one table
