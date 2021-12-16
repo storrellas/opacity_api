@@ -25,7 +25,8 @@ class Company(BaseModel):
 
 
 class Product(BaseModel):
-    COMMON_DENOMINATOR_LIST = ['category1', 'product_type', 'custom_label0']
+    COMMON_DENOMINATOR_LIST = ['category1', 'category2', 'product_type', \
+                                'custom_label0', 'custom_label1', 'custom_label2', 'custom_label3', 'custom_label4']
 
     company = models.ForeignKey(Company, related_name='products', 
                                 on_delete=models.SET_NULL, null=True)
