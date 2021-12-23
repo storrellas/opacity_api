@@ -105,20 +105,20 @@ class CompanyPivotTableApiView(views.APIView):
     df['custom_label0'] = None
     for product in company.products.all().iterator():
       for cd in Product.COMMON_DENOMINATOR_LIST:
-        df.loc[ df['Advertised SKU'] == product.seller_sku, cd] = getattr(product, cd)
+        df.loc[ df['Advertised ASIN'] == product.asin, cd] = getattr(product, cd)
 
     # # Check Stats in items
-    # advertised_sku_list = sorted( df['Advertised SKU'].unique() )
-    # seller_sku_list = list( queryset.order_by('seller_sku').values_list('seller_sku', flat=True) )
+    # advertised_asin_list = sorted( df['Advertised ASIN'].unique() )
+    # seller_asin_list = list( queryset.order_by('asin').values_list('asin', flat=True) )
     # print(" ")
     # print("-- advertised_sku_list --")
-    # print( advertised_sku_list )
+    # print( advertised_asin_list )
     # print(" ")
     # print('-- seller_sku --')
-    # print( seller_sku_list )
+    # print( seller_asin_list )
     # print(" ")
     # print("-- intersection --" )
-    # print( list(set(advertised_sku_list) & set(seller_sku_list)))
+    # print( list(set(advertised_asin_list) & set(seller_asin_list)))
 
     # def difference(list_a, list_b):
     #   a = set(list_a)
@@ -126,8 +126,10 @@ class CompanyPivotTableApiView(views.APIView):
     #   c = {element for element in a if element not in b}
     #   return c
     # print(" ")
-    # print("-- difference --")
-    # print( list(difference(advertised_sku_list, seller_sku_list)))
+    # print("-- difference (elements in 'advertised_sku_list' not in 'seller_asin_list' --")
+    # print( list(difference(advertised_asin_list, seller_asin_list)))
+    # print("-- difference (elements in 'seller_asin_list' not in 'advertised_asin_list' --")
+    # print( list(difference(seller_asin_list, advertised_asin_list)))
 
     # Define index and values
     pivot_index = [commonDenominator]
