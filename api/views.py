@@ -98,6 +98,8 @@ class CompanyPivotTableApiView(views.APIView):
     file_path = os.path.join(settings.COMPANY_DATA, company.ref)
     df = pd.read_csv(file_path, parse_dates=["Date"])
 
+
+
     # Filtering by CSV columns
     filtering = []
     for column in df.columns:
@@ -108,16 +110,23 @@ class CompanyPivotTableApiView(views.APIView):
       value = filter_item['value']
       df = df[ df[key] == value]
 
+    # Filtering by CD in Product
+    filtering_product = {}
+    for item in request.query_params:
+      if item in Product.COMMON_DENOMINATOR_LIST:
+        filtering_product[item] = request.query_params.get(item)
+
+    queryset_filtering = company.products.filter(**filtering_product)
+    filtering_asin_list = queryset_filtering.order_by('asin').values_list('asin', flat=True) 
+    df = df[ df['Advertised ASIN'].isin(filtering_asin_list) == True]
+
     ########
     # NOTE: Pending to filter by Product.COMMON_DENOMINATOR_LIST
     ########
-
     # Programmatically join with products
-    df['category1'] = None
-    df['product_type'] = None
-    df['custom_label0'] = None
-    for product in company.products.all().iterator():
+    for product in company.products.all().iterator():      
       for cd in Product.COMMON_DENOMINATOR_LIST:
+        df[cd] = None
         df.loc[ df['Advertised ASIN'] == product.asin, cd] = getattr(product, cd)
 
     # # Check Stats in items
