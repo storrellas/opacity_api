@@ -116,18 +116,42 @@ class CompanyPivotTableApiView(views.APIView):
       if item in Product.COMMON_DENOMINATOR_LIST:
         filtering_product[item] = request.query_params.get(item)
 
-    # queryset_filtering = company.products.filter(**filtering_product)
-    # filtering_asin_list = queryset_filtering.order_by('asin').values_list('asin', flat=True) 
-    # df = df[ df['Advertised ASIN'].isin(filtering_asin_list) == True]
+    queryset_filtering = company.products.filter(**filtering_product)
+    filtering_asin_list = queryset_filtering.order_by('asin').values_list('asin', flat=True) 
+    df = df[ df['Advertised ASIN'].isin(filtering_asin_list) == True]
+
+    # Joining products and DF
+    for cd in Product.COMMON_DENOMINATOR_LIST:
+      df[cd] = None
+    # Programmatically join with products
+    for product in company.products.all().iterator():      
+      for cd in Product.COMMON_DENOMINATOR_LIST:
+        #df[cd] = None
+        df.loc[ df['Advertised ASIN'] == product.asin, cd] = getattr(product, cd)
+
+
+    # # Filtering by CSV columns
+    # filtering = []
+    # for column in df.columns:
+    #   if column in request.query_params:
+    #     filtering.append( { 'key': column, 'value': request.query_params.get(column)})
+    # for filter_item in filtering:
+    #   key = filter_item['key']
+    #   value = filter_item['value']
+    #   df = df[ df[key] == value]
 
     ########
     # NOTE: Pending to filter by Product.COMMON_DENOMINATOR_LIST
     ########
-    # Programmatically join with products
-    for product in company.products.all().iterator():      
-      for cd in Product.COMMON_DENOMINATOR_LIST:
-        df[cd] = None
-        df.loc[ df['Advertised ASIN'] == product.asin, cd] = getattr(product, cd)
+
+    # # Programmatically join with products
+    # df['category1'] = None
+    # df['product_type'] = None
+    # df['custom_label0'] = None
+    # for product in company.products.all().iterator():
+    #   for cd in Product.COMMON_DENOMINATOR_LIST:
+    #     df.loc[ df['Advertised ASIN'] == product.asin, cd] = getattr(product, cd)
+##############
 
     # # Check Stats in items
     # advertised_asin_list = sorted( df['Advertised ASIN'].unique() )
