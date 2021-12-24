@@ -116,9 +116,9 @@ class CompanyPivotTableApiView(views.APIView):
       if item in Product.COMMON_DENOMINATOR_LIST:
         filtering_product[item] = request.query_params.get(item)
 
-    queryset_filtering = company.products.filter(**filtering_product)
-    filtering_asin_list = queryset_filtering.order_by('asin').values_list('asin', flat=True) 
-    df = df[ df['Advertised ASIN'].isin(filtering_asin_list) == True]
+    # queryset_filtering = company.products.filter(**filtering_product)
+    # filtering_asin_list = queryset_filtering.order_by('asin').values_list('asin', flat=True) 
+    # df = df[ df['Advertised ASIN'].isin(filtering_asin_list) == True]
 
     ########
     # NOTE: Pending to filter by Product.COMMON_DENOMINATOR_LIST
