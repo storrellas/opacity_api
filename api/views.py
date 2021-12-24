@@ -98,8 +98,21 @@ class CompanyPivotTableApiView(views.APIView):
     file_path = os.path.join(settings.COMPANY_DATA, company.ref)
     df = pd.read_csv(file_path, parse_dates=["Date"])
 
+    # Filtering by CSV columns
+    filtering = []
+    for column in df.columns:
+      if column in request.query_params:
+        filtering.append( { 'key': column, 'value': request.query_params.get(column)})
+    for filter_item in filtering:
+      key = filter_item['key']
+      value = filter_item['value']
+      df = df[ df[key] == value]
+
+    ########
+    # NOTE: Pending to filter by Product.COMMON_DENOMINATOR_LIST
+    ########
+
     # Programmatically join with products
-    queryset = company.products.all()
     df['category1'] = None
     df['product_type'] = None
     df['custom_label0'] = None
