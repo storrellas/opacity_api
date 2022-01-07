@@ -230,7 +230,7 @@ class CompanyPivotTableApiView(views.APIView):
                                   aggfunc=aggfunc)
 
     if range0_table.empty or range1_table.empty:
-        return Response({})
+        return Response([])
 
     # Add special characters back to columns
     for pivot_value, special_char in special_char_mapping.items():
