@@ -50,33 +50,6 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 class CompanyPivotTableApiView(views.APIView):
 
-  # def get(self, request, pk, format=None):
-  #   company = Company.objects.get(uuid=pk)
-
-  #   # Check whether file is uploaded
-  #   if company.ref is None:
-  #     return Response({'message': 'No file specified'}, status=status.HTTP_400_BAD_REQUEST)
-  #   # Check whether mappings was created
-  #   mappings = company.mappings
-  #   if not mappings['date'] or not mappings['commonDenominators'] or not mappings['values']:
-  #       return Response({'message': 'No mappings specified'}, status=status.HTTP_400_BAD_REQUEST)
-
-  #   # Read CSV file
-  #   file_path = os.path.join(settings.COMPANY_DATA, company.ref)
-  #   df = pd.read_csv(file_path, parse_dates=["Date"])
-
-  #   df["Date"] = pd.to_datetime(df['Date'])
-
-  #   # Mask
-  #   start = '12-01-2019'
-  #   end = '12-05-2019'
-  #   mask = (df['Date'] > start) & (df['Date'] <= end)
-  #   df = df.loc[mask]
-
-  #   # Create pivot_table
-  #   table = pd.pivot_table(df, index=['Portfolio name'], values=["Impressions", "Clicks"], dropna=True, fill_value=0,
-  #                             aggfunc={"Impressions": np.sum,"Clicks": np.sum})
-  #   return Response(table)
 
   def post(self, request, pk, format=None):
     company = Company.objects.get(uuid=pk)
@@ -97,8 +70,6 @@ class CompanyPivotTableApiView(views.APIView):
     # Read CSV file
     file_path = os.path.join(settings.COMPANY_DATA, company.ref)
     df = pd.read_csv(file_path, parse_dates=["Date"])
-
-
 
     # Filtering by CSV columns
     filtering = []
@@ -129,54 +100,6 @@ class CompanyPivotTableApiView(views.APIView):
         #df[cd] = None
         df.loc[ df['Advertised ASIN'] == product.asin, cd] = getattr(product, cd)
 
-
-    # # Filtering by CSV columns
-    # filtering = []
-    # for column in df.columns:
-    #   if column in request.query_params:
-    #     filtering.append( { 'key': column, 'value': request.query_params.get(column)})
-    # for filter_item in filtering:
-    #   key = filter_item['key']
-    #   value = filter_item['value']
-    #   df = df[ df[key] == value]
-
-    ########
-    # NOTE: Pending to filter by Product.COMMON_DENOMINATOR_LIST
-    ########
-
-    # # Programmatically join with products
-    # df['category1'] = None
-    # df['product_type'] = None
-    # df['custom_label0'] = None
-    # for product in company.products.all().iterator():
-    #   for cd in Product.COMMON_DENOMINATOR_LIST:
-    #     df.loc[ df['Advertised ASIN'] == product.asin, cd] = getattr(product, cd)
-##############
-
-    # # Check Stats in items
-    # advertised_asin_list = sorted( df['Advertised ASIN'].unique() )
-    # seller_asin_list = list( queryset.order_by('asin').values_list('asin', flat=True) )
-    # print(" ")
-    # print("-- advertised_sku_list --")
-    # print( advertised_asin_list )
-    # print(" ")
-    # print('-- seller_sku --')
-    # print( seller_asin_list )
-    # print(" ")
-    # print("-- intersection --" )
-    # print( list(set(advertised_asin_list) & set(seller_asin_list)))
-
-    # def difference(list_a, list_b):
-    #   a = set(list_a)
-    #   b = set(list_b)
-    #   c = {element for element in a if element not in b}
-    #   return c
-    # print(" ")
-    # print("-- difference (elements in 'advertised_sku_list' not in 'seller_asin_list' --")
-    # print( list(difference(advertised_asin_list, seller_asin_list)))
-    # print("-- difference (elements in 'seller_asin_list' not in 'advertised_asin_list' --")
-    # print( list(difference(seller_asin_list, advertised_asin_list)))
-
     # Define index and values
     pivot_index = [commonDenominator]
     pivot_values = mappings['values']
@@ -198,58 +121,97 @@ class CompanyPivotTableApiView(views.APIView):
                     break
 
 
-    # Define date ranges
-    first_date_range = request.data.get('firstDateRange')
-    second_date_range = request.data.get('secondDateRange')
+    # # Define date ranges
+    # first_date_range = request.data.get('firstDateRange')
+    # second_date_range = request.data.get('secondDateRange')
 
-    start0 = first_date_range['startDate']
-    end0 = first_date_range['endDate']
+    # start0 = first_date_range['startDate']
+    # end0 = first_date_range['endDate']
 
-    start1 = second_date_range['startDate']
-    end1 = second_date_range['endDate']
+    # start1 = second_date_range['startDate']
+    # end1 = second_date_range['endDate']
 
-    # Select the date ranges
-    range0_mask = (df['Date'] > start0) & (df['Date'] <= end0)
-    range1_mask = (df['Date'] > start1) & (df['Date'] <= end1)
-    range0_frame = df.loc[range0_mask]
-    range1_frame = df.loc[range1_mask]
+    # # Select the date ranges
+    # range0_mask = (df['Date'] > start0) & (df['Date'] <= end0)
+    # range1_mask = (df['Date'] > start1) & (df['Date'] <= end1)
+    # range0_frame = df.loc[range0_mask]
+    # range1_frame = df.loc[range1_mask]
 
-    # Create the tables
-    range0_table = pd.pivot_table(range0_frame,
+    # # Create the tables
+    # range0_table = pd.pivot_table(range0_frame,
+    #                               index=pivot_index,
+    #                               values=pivot_values,
+    #                               dropna=True,
+    #                               fill_value=0,
+    #                               aggfunc=aggfunc)
+
+    # range1_table = pd.pivot_table(range1_frame,
+    #                               index=pivot_index,
+    #                               values=pivot_values,
+    #                               dropna=True,
+    #                               fill_value=0,
+    #                               aggfunc=aggfunc)
+
+    # if range0_table.empty or range1_table.empty:
+    #     return Response([])
+
+    # # Add special characters back to columns
+    # for pivot_value, special_char in special_char_mapping.items():
+    #     range0_table[pivot_value] = special_char.replace('\\', '') + range0_table[pivot_value].round(2).astype(str)
+    #     range1_table[pivot_value] = special_char.replace('\\', '') + range1_table[pivot_value].round(2).astype(str)
+
+    # # Rename the columns to indicate date range
+    # columns = {}
+    # for value in pivot_values:
+    #     columns[value] = value + f' {start0} to {end0}'
+    # range0_table.rename(columns=columns, inplace=True)
+
+    # columns = {}
+    # for value in pivot_values:
+    #     columns[value] = value + f' {start1} to {end1}'
+    # range1_table.rename(columns=columns, inplace=True)
+
+    # # Concatenate the tables into one table
+    # pivot_table = pd.concat([range0_table, range1_table], axis=1)
+
+
+    pivot_table = None
+    for date in request.data.get('dateRange'):
+      start = date['startDate']
+      end = date['endDate']
+
+      range_mask = (df['Date'] > start) & (df['Date'] <= end)
+      range_frame = df.loc[range_mask]
+
+      # Create the tables
+      range_table = pd.pivot_table(range_frame,
                                   index=pivot_index,
                                   values=pivot_values,
                                   dropna=True,
                                   fill_value=0,
                                   aggfunc=aggfunc)
 
-    range1_table = pd.pivot_table(range1_frame,
-                                  index=pivot_index,
-                                  values=pivot_values,
-                                  dropna=True,
-                                  fill_value=0,
-                                  aggfunc=aggfunc)
+      if range_table.empty:
+          return Response([])
 
-    if range0_table.empty or range1_table.empty:
-        return Response([])
+      # Add special characters back to columns
+      for pivot_value, special_char in special_char_mapping.items():
+          range_table[pivot_value] = special_char.replace('\\', '') + range_table[pivot_value].round(2).astype(str)
 
-    # Add special characters back to columns
-    for pivot_value, special_char in special_char_mapping.items():
-        range0_table[pivot_value] = special_char.replace('\\', '') + range0_table[pivot_value].round(2).astype(str)
-        range1_table[pivot_value] = special_char.replace('\\', '') + range1_table[pivot_value].round(2).astype(str)
+      # Rename the columns to indicate date range
+      columns = {}
+      for value in pivot_values:
+          columns[value] = value + f' {start} to {end}'
+      range_table.rename(columns=columns, inplace=True)
 
-    # Rename the columns to indicate date range
-    columns = {}
-    for value in pivot_values:
-        columns[value] = value + f' {start0} to {end0}'
-    range0_table.rename(columns=columns, inplace=True)
+      # Append to df_total   
+      if pivot_table is None:
+        pivot_table = range_table
+      else:
+        pivot_table = pd.concat([pivot_table, range_table], axis=1)
 
-    columns = {}
-    for value in pivot_values:
-        columns[value] = value + f' {start1} to {end1}'
-    range1_table.rename(columns=columns, inplace=True)
 
-    # Concatenate the tables into one table
-    pivot_table = pd.concat([range0_table, range1_table], axis=1)
+    
 
     # Rearrange columns
     columns = pivot_table.columns.tolist()
