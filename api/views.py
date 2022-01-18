@@ -121,61 +121,9 @@ class CompanyPivotTableApiView(views.APIView):
                     break
 
 
-    # # Define date ranges
-    # first_date_range = request.data.get('firstDateRange')
-    # second_date_range = request.data.get('secondDateRange')
-
-    # start0 = first_date_range['startDate']
-    # end0 = first_date_range['endDate']
-
-    # start1 = second_date_range['startDate']
-    # end1 = second_date_range['endDate']
-
-    # # Select the date ranges
-    # range0_mask = (df['Date'] > start0) & (df['Date'] <= end0)
-    # range1_mask = (df['Date'] > start1) & (df['Date'] <= end1)
-    # range0_frame = df.loc[range0_mask]
-    # range1_frame = df.loc[range1_mask]
-
-    # # Create the tables
-    # range0_table = pd.pivot_table(range0_frame,
-    #                               index=pivot_index,
-    #                               values=pivot_values,
-    #                               dropna=True,
-    #                               fill_value=0,
-    #                               aggfunc=aggfunc)
-
-    # range1_table = pd.pivot_table(range1_frame,
-    #                               index=pivot_index,
-    #                               values=pivot_values,
-    #                               dropna=True,
-    #                               fill_value=0,
-    #                               aggfunc=aggfunc)
-
-    # if range0_table.empty or range1_table.empty:
-    #     return Response([])
-
-    # # Add special characters back to columns
-    # for pivot_value, special_char in special_char_mapping.items():
-    #     range0_table[pivot_value] = special_char.replace('\\', '') + range0_table[pivot_value].round(2).astype(str)
-    #     range1_table[pivot_value] = special_char.replace('\\', '') + range1_table[pivot_value].round(2).astype(str)
-
-    # # Rename the columns to indicate date range
-    # columns = {}
-    # for value in pivot_values:
-    #     columns[value] = value + f' {start0} to {end0}'
-    # range0_table.rename(columns=columns, inplace=True)
-
-    # columns = {}
-    # for value in pivot_values:
-    #     columns[value] = value + f' {start1} to {end1}'
-    # range1_table.rename(columns=columns, inplace=True)
-
-    # # Concatenate the tables into one table
-    # pivot_table = pd.concat([range0_table, range1_table], axis=1)
-
-
+    # Iterate on data ranges
     pivot_table = None
+    pivot_table_list = []
     for date in request.data.get('dateRange'):
       start = date['startDate']
       end = date['endDate']
@@ -210,8 +158,44 @@ class CompanyPivotTableApiView(views.APIView):
       else:
         pivot_table = pd.concat([pivot_table, range_table], axis=1)
 
+      #####################
+      #####################
 
-    
+      # Create the tables
+      range_table_v2 = pd.pivot_table(range_frame,
+                                  index=pivot_index,
+                                  values=pivot_values,
+                                  dropna=True,
+                                  fill_value=0,
+                                  aggfunc=aggfunc)
+
+      if range_table_v2.empty:
+          return Response([])
+
+      # Add special characters back to columns
+      for pivot_value, special_char in special_char_mapping.items():
+          range_table_v2[pivot_value] = special_char.replace('\\', '') + range_table_v2[pivot_value].round(2).astype(str)
+
+      # Rearrange columns
+      columns = range_table_v2.columns.tolist()
+      new_order = []
+      for i in range(len(pivot_values)):
+          new_order.extend(columns[i::len(pivot_values)])
+
+      range_table_v2 = range_table_v2[new_order]
+
+      # Treat index as regular column
+      range_table_v2.reset_index(level=0, inplace=True)
+
+      # Replace NaN by None
+      range_table_v2 = range_table_v2.fillna(np.nan).replace([np.nan], [None])
+
+      pivot_table_list.append({
+        'startDate': start,
+        'endDate': end,
+        'data': range_table_v2.to_dict(orient="records")
+      })
+      
 
     # Rearrange columns
     columns = pivot_table.columns.tolist()
@@ -228,7 +212,7 @@ class CompanyPivotTableApiView(views.APIView):
     pivot_table = pivot_table.fillna(np.nan).replace([np.nan], [None])
 
     # Convert to format appropriate for react-data-grid
-    return Response(pivot_table.to_dict(orient="records"))
+    return Response({'legacy': pivot_table.to_dict(orient="records"), 'result': pivot_table_list})
 
 class CompanyRawApiView(views.APIView):
 
