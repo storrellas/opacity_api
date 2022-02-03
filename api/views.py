@@ -44,6 +44,18 @@ class CompanyViewSet(viewsets.ModelViewSet):
   queryset = Company.objects.all()
   serializer_class = CompanySerializer
 
+  def perform_create(self, serializer):
+    # Incorporate generic mappings if any
+    mappings = {"unmapped": [],
+              "date": [],
+              "values": [],
+              "commonDenominators": []}
+    if self.request.data.get('mappings'):
+      mappings = self.request.data.get('mappings')
+
+    serializer.save(mappings=mappings)
+
+
 class ProductViewSet(viewsets.ModelViewSet):
   queryset = Product.objects.all()
   serializer_class = ProductSerializer
@@ -212,7 +224,8 @@ class CompanyPivotTableApiView(views.APIView):
     pivot_table = pivot_table.fillna(np.nan).replace([np.nan], [None])
 
     # Convert to format appropriate for react-data-grid
-    return Response({'legacy': pivot_table.to_dict(orient="records"), 'result': pivot_table_list})
+    return Response({'legacy': pivot_table.to_dict(orient="records"), 'prototype': pivot_table_list})
+    # return Response({'legacy': pivot_table.to_dict(orient="records"), 'prototype': pivot_table_list})
 
 class CompanyRawApiView(views.APIView):
 
@@ -267,5 +280,13 @@ class CompanyImportView(views.APIView):
     file_node_content = file_node.read()    
     with open( os.path.join(settings.COMPANY_DATA, company.ref) , "wb") as f:
       f.write(file_node_content)
+
+
+      # # Empty File
+      # try:
+      #     file = pd.read_csv(filePath, nrows=1)
+      #     columns = list(file.columns)
+      # except:
+      #     pass
 
     return Response({'message': 'ok'}) 
