@@ -225,8 +225,8 @@ class CompanyPivotTableApiView(views.APIView):
 
     # Convert to format appropriate for react-data-grid
     #return Response({'legacy': pivot_table.to_dict(orient="records"), 'prototype': pivot_table_list})
-    # return Response({'legacy': pivot_table.to_dict(orient="records"), 'prototype': pivot_table_list})
-    return Response(pivot_table_list)
+    return Response({'legacy': pivot_table.to_dict(orient="records"), 'result': pivot_table_list})
+    
 
 
 class CompanyRawApiView(views.APIView):
