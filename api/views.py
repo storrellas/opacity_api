@@ -282,9 +282,9 @@ class CompanyImportView(views.APIView):
       f.write(file_node_content)
 
     # Update company mappings
-    df = pd.read_csv(StringIO(file_node_content.decode('utf-8')), sep=";")
+    df = pd.read_csv(StringIO(file_node_content.decode('utf-8')), sep=",")
     columns = list(df.columns)
-    company.mappings = {"unmapped": columns.split(','),
+    company.mappings = {"unmapped": columns,
               "date": [],
               "values": [],
               "commonDenominators": []}
@@ -292,3 +292,4 @@ class CompanyImportView(views.APIView):
 
 
     return Response(status=status.HTTP_204_NO_CONTENT)
+
