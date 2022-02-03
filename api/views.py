@@ -224,8 +224,10 @@ class CompanyPivotTableApiView(views.APIView):
     pivot_table = pivot_table.fillna(np.nan).replace([np.nan], [None])
 
     # Convert to format appropriate for react-data-grid
-    return Response({'legacy': pivot_table.to_dict(orient="records"), 'prototype': pivot_table_list})
+    #return Response({'legacy': pivot_table.to_dict(orient="records"), 'prototype': pivot_table_list})
     # return Response({'legacy': pivot_table.to_dict(orient="records"), 'prototype': pivot_table_list})
+    return Response(pivot_table_list)
+
 
 class CompanyRawApiView(views.APIView):
 
