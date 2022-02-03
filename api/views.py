@@ -284,7 +284,7 @@ class CompanyImportView(views.APIView):
     # Update company mappings
     df = pd.read_csv(StringIO(file_node_content.decode('utf-8')), sep=";")
     columns = list(df.columns)
-    company.mappings = {"unmapped": columns,
+    company.mappings = {"unmapped": columns.split(','),
               "date": [],
               "values": [],
               "commonDenominators": []}
