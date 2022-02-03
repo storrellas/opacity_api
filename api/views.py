@@ -1,5 +1,5 @@
 import os
-
+from io import StringIO
 import pandas as pd
 import numpy as np
 import json
@@ -281,12 +281,14 @@ class CompanyImportView(views.APIView):
     with open( os.path.join(settings.COMPANY_DATA, company.ref) , "wb") as f:
       f.write(file_node_content)
 
+    # Update company mappings
+    df = pd.read_csv(StringIO(file_node_content.decode('utf-8')), sep=";")
+    columns = list(df.columns)
+    company.mappings = {"unmapped": columns,
+              "date": [],
+              "values": [],
+              "commonDenominators": []}
+    company.save()
 
-      # # Empty File
-      # try:
-      #     file = pd.read_csv(filePath, nrows=1)
-      #     columns = list(file.columns)
-      # except:
-      #     pass
 
-    return Response({'message': 'ok'}) 
+    return Response(status=status.HTTP_204_NO_CONTENT)
