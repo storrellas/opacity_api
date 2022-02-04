@@ -7,4 +7,7 @@ db.sqlite3
 **/stuff/history_fixture/
 **/doc/
 **/docker/logs/
-**/docker/persistance*
+**/docker/persistance/*
+**/docker/company_data/*
+**/docker/company_data_docker/*
+#**/docker*
