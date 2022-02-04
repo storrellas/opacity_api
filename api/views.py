@@ -279,6 +279,7 @@ class CompanyImportView(views.APIView):
       raise exceptions.ValiationError("Mising 'data-file'")
 
     # Read content
+    company.ref = f"{str(company.uuid)}.csv"
     file_node_content = file_node.read()    
     with open( os.path.join(settings.COMPANY_DATA, company.ref) , "wb") as f:
       f.write(file_node_content)
