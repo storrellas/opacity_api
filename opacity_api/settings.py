@@ -137,3 +137,34 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 COMPANY_DATA =  os.path.join(BASE_DIR, os.getenv('COMPANY_DATA', 'company_data') )
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} | {filename}@{lineno} | {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },    
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'INFO',
+            'handlers': ['console'],
+            'propagate': False,
+        }
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}

@@ -3,6 +3,7 @@ from io import StringIO
 import pandas as pd
 import numpy as np
 import json
+import logging
 
 # Django imports
 from django.shortcuts import render
@@ -101,7 +102,8 @@ class CompanyPivotTableApiView(views.APIView):
 
     queryset_filtering = company.products.filter(**filtering_product)
     filtering_asin_list = queryset_filtering.order_by('asin').values_list('asin', flat=True) 
-    df = df[ df['Advertised ASIN'].isin(filtering_asin_list) == True]
+    if len(filtering_asin_list) > 0:
+      df = df[ df['Advertised ASIN'].isin(filtering_asin_list) == True]
 
     # Joining products and DF
     for cd in Product.COMMON_DENOMINATOR_LIST:
@@ -109,8 +111,8 @@ class CompanyPivotTableApiView(views.APIView):
     # Programmatically join with products
     for product in company.products.all().iterator():      
       for cd in Product.COMMON_DENOMINATOR_LIST:
-        #df[cd] = None
         df.loc[ df['Advertised ASIN'] == product.asin, cd] = getattr(product, cd)
+
 
     # Define index and values
     pivot_index = [commonDenominator]
@@ -132,7 +134,6 @@ class CompanyPivotTableApiView(views.APIView):
                                                               regex=True).astype(float)
                     break
 
-
     # Iterate on data ranges
     pivot_table = None
     pivot_table_list = []
@@ -151,8 +152,10 @@ class CompanyPivotTableApiView(views.APIView):
                                   fill_value=0,
                                   aggfunc=aggfunc)
 
+      # Check if table is empty
       if range_table.empty:
-          return Response([])
+        logging.warn("Table is empty")
+        return Response([])
 
       # Add special characters back to columns
       for pivot_value, special_char in special_char_mapping.items():
@@ -224,7 +227,6 @@ class CompanyPivotTableApiView(views.APIView):
     pivot_table = pivot_table.fillna(np.nan).replace([np.nan], [None])
 
     # Convert to format appropriate for react-data-grid
-    #return Response({'legacy': pivot_table.to_dict(orient="records"), 'prototype': pivot_table_list})
     return Response({'legacy': pivot_table.to_dict(orient="records"), 'result': pivot_table_list})
     
 
@@ -294,5 +296,5 @@ class CompanyImportView(views.APIView):
     company.save()
 
 
-    return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(CompanySerializer(company).data)
 
