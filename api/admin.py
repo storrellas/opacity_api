@@ -36,3 +36,4 @@ class CompanyAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
   list_display = ('seller_sku', 'asin', 'listing_id', 'company')
   ordering = ('seller_sku',)
+  list_filter = ["company",]
