@@ -64,7 +64,6 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 class CompanyPivotTableApiView(views.APIView):
 
-
   def post(self, request, pk, format=None):
     company = None
     try:
@@ -146,7 +145,9 @@ class CompanyPivotTableApiView(views.APIView):
                                                               regex=True).astype(float)
                     break
 
-    
+    ##########################
+    ## LEGACY COMPUTE
+    ##########################
 
     # Iterate on data ranges
     pivot_table = None
@@ -188,6 +189,7 @@ class CompanyPivotTableApiView(views.APIView):
         pivot_table = pd.concat([pivot_table, range_table], axis=1)
 
       #####################
+      # RESULT COMPUTE
       #####################
 
       # Create the tables
@@ -243,7 +245,27 @@ class CompanyPivotTableApiView(views.APIView):
     # Convert to format appropriate for react-data-grid
     return Response({'legacy': pivot_table.to_dict(orient="records"), 'result': pivot_table_list})
     
+class CompanyDateRangeApiView(views.APIView):
 
+  def post(self, request, pk, format=None):
+    company = None
+    try:
+      company = Company.objects.get(uuid=pk)
+    except Exception as e:
+      raise exceptions.ValidationError({'reason':'company does not exist'})
+
+    # Read CSV file
+    file_path = os.path.join(settings.COMPANY_DATA, company.ref)
+    df = pd.read_csv(file_path, parse_dates=["Date"])
+
+    # Sort
+    df = df.sort_values(by=['Date'])
+
+    # Extract startDate/endDate
+    startDate = df.iloc[0]['Date'].strftime('%m/%d/%Y')
+    endDate = df.iloc[-1]['Date'].strftime('%m/%d/%Y')
+  
+    return Response({'startDate': startDate, 'endDate': endDate})
 
 class CompanyRawApiView(views.APIView):
 
@@ -279,9 +301,6 @@ class CompanyRawApiView(views.APIView):
 
     # Convert to format appropriate for react-data-grid
     return Response(df.to_dict(orient="records"))
-
-
-
 
 
 @parser_classes((MultiPartParser, ))
