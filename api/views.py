@@ -91,7 +91,7 @@ class CompanyPivotTableApiView(views.APIView):
 
     # Check whether CD exists
     columns = list(df.columns)
-    if commonDenominator in columns:
+    if commonDenominator in columns or commonDenominator in Product.COMMON_DENOMINATOR_LIST:
       pass
     else:
       raise exceptions.ValidationError({'reason': f"Common denominator does not exist in data", 'commonDenominators': columns})
