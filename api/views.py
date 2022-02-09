@@ -89,6 +89,13 @@ class CompanyPivotTableApiView(views.APIView):
     file_path = os.path.join(settings.COMPANY_DATA, company.ref)
     df = pd.read_csv(file_path, parse_dates=["Date"])
 
+    # Check whether CD exists
+    columns = list(df.columns)
+    if commonDenominator in columns:
+      pass
+    else:
+      raise exceptions.ValidationError({'reason': f"Common denominator does not exist in data", 'commonDenominators': columns})
+
     # Filtering by CSV columns
     filtering = []
     for column in df.columns:
@@ -138,6 +145,8 @@ class CompanyPivotTableApiView(views.APIView):
                     df[pivot_value] = df[pivot_value].replace({special_char: ''},
                                                               regex=True).astype(float)
                     break
+
+    
 
     # Iterate on data ranges
     pivot_table = None
