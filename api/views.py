@@ -66,7 +66,11 @@ class CompanyPivotTableApiView(views.APIView):
 
 
   def post(self, request, pk, format=None):
-    company = Company.objects.get(uuid=pk)
+    company = None
+    try:
+      company = Company.objects.get(uuid=pk)
+    except Exception as e:
+      raise exceptions.ValidationError({'reason':'company does not exist'})
 
     # Check whether file is uploaded
     if company.ref is None:
