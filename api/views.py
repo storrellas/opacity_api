@@ -247,7 +247,7 @@ class CompanyPivotTableApiView(views.APIView):
     
 class CompanyDateRangeApiView(views.APIView):
 
-  def post(self, request, pk, format=None):
+  def get(self, request, pk, format=None):
     company = None
     try:
       company = Company.objects.get(uuid=pk)
@@ -264,7 +264,7 @@ class CompanyDateRangeApiView(views.APIView):
     # Extract startDate/endDate
     startDate = df.iloc[0]['Date'].strftime('%m/%d/%Y')
     endDate = df.iloc[-1]['Date'].strftime('%m/%d/%Y')
-  
+
     return Response({'startDate': startDate, 'endDate': endDate})
 
 class CompanyRawApiView(views.APIView):
