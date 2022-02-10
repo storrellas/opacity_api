@@ -10,6 +10,7 @@ services:
       - 127.0.0.1:$API_PORT:8080
     volumes:
       - $COMPANY_DATA:/repo/company_data
+      - ./media:/repo/$MEDIA_PATH
     environment:
     - DB_HOST=$DB_HOST
     - DB_NAME=$DB_NAME
@@ -21,7 +22,6 @@ services:
     image: postgres
     volumes:
       - ./persistance:/var/lib/postgresql/data
-      - ./media:/media_docker
     ports:
       - 127.0.0.1:5434:5432
     environment:

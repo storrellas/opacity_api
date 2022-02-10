@@ -10,4 +10,5 @@ db.sqlite3
 **/docker/persistance/*
 **/docker/company_data/*
 **/docker/company_data_docker/*
+**/docker/media/*
 #**/docker*
