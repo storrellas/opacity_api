@@ -283,7 +283,7 @@ class CompanyRawApiView(views.APIView):
         return Response({'message': 'No mappings specified'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Read CSV
-    file_path = os.path.join(settings.COMPANY_DATA, company.data)
+    file_path = os.path.join(settings.MEDIA_ROOT, company.data.path)
     df = pd.read_csv(file_path, parse_dates=["Date"])
     # Fill NA values
     df = df.fillna(0)
