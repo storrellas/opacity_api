@@ -14,7 +14,6 @@ class BaseModel(models.Model):
 
 class Company(BaseModel):
     name = models.CharField(max_length=100)
-    ref = models.CharField(max_length=100, blank=True, null=True)
     data = models.FileField(upload_to='company', blank=True, null=True)
     mappings = models.JSONField(blank=True, null=True)
 

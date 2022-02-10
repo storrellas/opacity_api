@@ -9,6 +9,7 @@ from csv import reader
 # Django imports
 from django.shortcuts import render
 from django.conf import settings
+from django.core.files.base import ContentFile, File
 
 # DRF imports
 from rest_framework import views, viewsets, serializers, exceptions, status
@@ -72,7 +73,7 @@ class CompanyPivotTableApiView(views.APIView):
       raise exceptions.ValidationError({'reason':'company does not exist'})
 
     # Check whether file is uploaded
-    if company.ref is None:
+    if company.data is None:
       return Response({'message': 'No file specified'}, status=status.HTTP_400_BAD_REQUEST)
     # Check whether mappings was created
     mappings = company.mappings
@@ -85,7 +86,7 @@ class CompanyPivotTableApiView(views.APIView):
       return Response({'message': 'Missing commonDenominator'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Read CSV file
-    file_path = os.path.join(settings.COMPANY_DATA, company.ref)
+    file_path = os.path.join(settings.MEDIA_ROOT, company.data.path)
     df = pd.read_csv(file_path, parse_dates=["Date"])
 
     # Check whether CD exists
@@ -255,7 +256,7 @@ class CompanyDateRangeApiView(views.APIView):
       raise exceptions.ValidationError({'reason':'company does not exist'})
 
     # Read CSV file
-    file_path = os.path.join(settings.COMPANY_DATA, company.ref)
+    file_path = os.path.join(settings.MEDIA_ROOT, company.data.path)
     df = pd.read_csv(file_path, parse_dates=["Date"])
 
     # Sort
@@ -274,7 +275,7 @@ class CompanyRawApiView(views.APIView):
 
 
     # Check whether file is uploaded
-    if company.ref is None:
+    if company.data is None:
       return Response({'message': 'No file specified'}, status=status.HTTP_400_BAD_REQUEST)
     # Check whether mappings was created
     mappings = company.mappings
@@ -282,7 +283,7 @@ class CompanyRawApiView(views.APIView):
         return Response({'message': 'No mappings specified'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Read CSV
-    file_path = os.path.join(settings.COMPANY_DATA, company.ref)
+    file_path = os.path.join(settings.COMPANY_DATA, company.data)
     df = pd.read_csv(file_path, parse_dates=["Date"])
     # Fill NA values
     df = df.fillna(0)
@@ -303,6 +304,8 @@ class CompanyRawApiView(views.APIView):
     return Response(df.to_dict(orient="records"))
 
 
+
+
 @parser_classes((MultiPartParser, ))
 class CompanyImportView(views.APIView):
   def post(self, request, pk, format=None):
@@ -314,10 +317,8 @@ class CompanyImportView(views.APIView):
       raise exceptions.ValiationError("Mising 'data-file'")
 
     # Read content
-    company.ref = f"{str(company.uuid)}.csv"
     file_node_content = file_node.read()    
-    with open( os.path.join(settings.COMPANY_DATA, company.ref) , "wb") as f:
-      f.write(file_node_content)
+
 
     # Update company mappings
     df = pd.read_csv(StringIO(file_node_content.decode('utf-8')), sep=",")
@@ -326,6 +327,9 @@ class CompanyImportView(views.APIView):
               "date": [],
               "values": [],
               "commonDenominators": []}
+    # To save with company.uuid
+    #company.data.save(f"{str(company.uuid)}.csv", ContentFile(file_node_content))
+    company.data = file_node
     company.save()
 
     # Clean previous products
