@@ -17,9 +17,9 @@
         "Cost Per Click (CPC)",
         "Click-Thru Rate (CTR)",
         "Spend",
-        "7 Day Total Sales ",
-        "7 Day Other SKU Sales ",
-        "Total Advertising Cost of Sales (ACoS) ",
+        "7 Day Total Sales",
+        "7 Day Other SKU Sales",
+        "Total Advertising Cost of Sales (ACoS)",
         "7 Day Total Orders (#)",
         "7 Day Conversion Rate",
         "Total Return on Advertising Spend (RoAS)"
@@ -28,7 +28,7 @@
         "7 Day Total Units (#)",
         "7 Day Advertised SKU Units (#)",
         "7 Day Other SKU Units (#)",
-        "7 Day Advertised SKU Sales "
+        "7 Day Advertised SKU Sales"
       ],
       "commonDenominators": [
         "Currency",
