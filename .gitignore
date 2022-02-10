@@ -6,6 +6,7 @@ docker/persistance/
 *localsettings.py
 node_modules/
 **company_data/
+media/*
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

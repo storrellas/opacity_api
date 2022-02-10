@@ -83,7 +83,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DB_NAME', 'drleak'),
+        'NAME': os.getenv('DB_NAME', 'opacity'),
         'USER': os.getenv('DB_USER', 'postgres'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
         'HOST': os.getenv('DB_HOST', 'localhost'),
@@ -129,6 +129,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/adminstatic/'
+
+MEDIA_PATH = os.getenv('MEDIA_PATH', 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_PATH)
+MEDIA_URL = 'media/'
+print("MEDIA_ROOT123 ", BASE_DIR, MEDIA_ROOT)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
