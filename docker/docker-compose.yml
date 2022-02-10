@@ -21,6 +21,7 @@ services:
     image: postgres
     volumes:
       - ./persistance:/var/lib/postgresql/data
+      - ./media:/media_docker
     ports:
       - 127.0.0.1:5434:5432
     environment:
