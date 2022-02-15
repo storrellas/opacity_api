@@ -4,7 +4,8 @@ import pandas as pd
 import numpy as np
 import json
 import logging
-from csv import reader
+
+from csv import reader, DictReader
 
 # Django imports
 from django.shortcuts import render
@@ -359,3 +360,50 @@ class CompanyImportView(views.APIView):
 
     return Response(CompanySerializer(company).data)
 
+@parser_classes((MultiPartParser, ))
+class CompanyProductView(views.APIView):
+  def post(self, request, pk, format=None):
+    company = Company.objects.get(uuid=pk)
+
+    # Check properly parameters
+    file_node = request.FILES.get('data-file')
+    if file_node is None:
+      raise exceptions.ValiationError("Mising 'data-file'")
+
+    # Read content
+    file_node_content = file_node.read().decode('utf-8').splitlines()    
+
+  
+    # Clean previous products
+    Product.objects.filter(company=company).delete()
+
+    # Create products for company
+    product_list = []
+    csv_reader = DictReader(file_node_content)
+    for row in csv_reader:
+      # Adequate rows
+      data = {
+        'seller_sku' : row['seller-sku'],
+        'asin' : row['asin'],
+        'name' : row['item-name'],
+        'listing_id' : row['listing-id'],
+        'variant_type' : row['Variant Type'],
+        'category1' : row['Category1'],
+        'category2' : row['Category2'],
+        'product_type' : row['Product Type'],
+        'color' : row['Color'],
+        'size' : row['Size'],
+        'custom_label0' : row['Custom Label 0'],
+        'custom_label1' : row['Custom Label 1'],
+        'custom_label2' : row['Custom Label 2'],
+        'custom_label3' : row['Custom Label 3'],
+        'custom_label4' : row['Custom Label 4'],
+      }
+      product = Product(**data)
+      product_list.append(product)
+
+    # Effectively create products    
+    Product.objects.bulk_create( product_list )
+
+    # Return response
+    return Response(CompanySerializer(company).data)

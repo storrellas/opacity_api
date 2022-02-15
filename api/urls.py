@@ -17,6 +17,7 @@ urlpatterns = [
   path('company/<str:pk>/pivottable/', CompanyPivotTableApiView.as_view()),
   path('company/<str:pk>/raw/', CompanyRawApiView.as_view()),
   path('company/<str:pk>/import/', CompanyImportView.as_view()),
+  path('company/<str:pk>/product/', CompanyProductView.as_view()),
   path('company/<str:pk>/daterange/', CompanyDateRangeApiView.as_view()),
 ]
 urlpatterns += router.urls
