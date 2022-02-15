@@ -6,7 +6,7 @@
     "created_at": "2021-12-03T08:11:00.408Z",
     "updated_at": "2021-12-03T08:11:00.408Z",
     "name": "Test",
-    "ref": "Amazon_PPC_visualization_-_Advertised_Product.csv",
+    "data": "company/Amazon_2021.csv",
     "mappings": {
       "date": [
         "Date"
