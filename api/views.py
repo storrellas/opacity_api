@@ -333,29 +333,29 @@ class CompanyImportView(views.APIView):
     company.data = file_node
     company.save()
 
-    # Clean previous products
-    Product.objects.filter(company=company).delete()
-    with open(f"{settings.BASE_DIR}/stuff/opacity_products_manager.csv", 'r') as read_obj:
-      # pass the file object to reader() to get the reader object
-      csv_reader = reader(read_obj)
+    # # Clean previous products
+    # Product.objects.filter(company=company).delete()
+    # with open(f"{settings.BASE_DIR}/stuff/opacity_products_manager.csv", 'r') as read_obj:
+    #   # pass the file object to reader() to get the reader object
+    #   csv_reader = reader(read_obj)
       
-      # This skips the first row of the CSV file.
-      row = next(csv_reader)
+    #   # This skips the first row of the CSV file.
+    #   row = next(csv_reader)
 
-      product_list = []
-      for row in csv_reader:
-        # row variable is a list that represents a row in csv
-        product = Product(company=company, seller_sku=row[0], asin=row[1], name=row[2], listing_id=row[3],
-                status=row[6], variant_type=row[7], 
-                category1=row[8], category2=row[9], 
-                product_type=row[10], color=row[11], size=row[12],
-                custom_label0=row[13], custom_label1=row[14],
-                custom_label2=row[15], custom_label3=row[16],
-                custom_label4=row[17])
-        product_list.append(product)
+    #   product_list = []
+    #   for row in csv_reader:
+    #     # row variable is a list that represents a row in csv
+    #     product = Product(company=company, seller_sku=row[0], asin=row[1], name=row[2], listing_id=row[3],
+    #             status=row[6], variant_type=row[7], 
+    #             category1=row[8], category2=row[9], 
+    #             product_type=row[10], color=row[11], size=row[12],
+    #             custom_label0=row[13], custom_label1=row[14],
+    #             custom_label2=row[15], custom_label3=row[16],
+    #             custom_label4=row[17])
+    #     product_list.append(product)
       
 
-      Product.objects.bulk_create( product_list )
+    #   Product.objects.bulk_create( product_list )
 
 
     return Response(CompanySerializer(company).data)
@@ -383,6 +383,7 @@ class CompanyProductView(views.APIView):
     for row in csv_reader:
       # Adequate rows
       data = {
+        'company': company, 
         'seller_sku' : row['seller-sku'],
         'asin' : row['asin'],
         'name' : row['item-name'],
