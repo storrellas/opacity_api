@@ -27,18 +27,25 @@ from .models import Company, Product
 # Serializers
 ###########################
 
-class CompanySerializer(serializers.ModelSerializer):
-    product_commonDenominators = serializers.SerializerMethodField()
-    def get_product_commonDenominators(self, obj):
-      return Product.COMMON_DENOMINATOR_LIST
-    class Meta:
-        model = Company
-        fields = '__all__'
-
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+
+class CompanySerializer(serializers.ModelSerializer):
+    product_commonDenominators = serializers.SerializerMethodField()
+    product_count = serializers.SerializerMethodField()
+
+    def get_product_commonDenominators(self, obj):
+      return Product.COMMON_DENOMINATOR_LIST
+    def get_product_count(self, obj):
+      return obj.products.count()
+
+    class Meta:
+        model = Company
+        fields = '__all__'
+
+
 
 ###########################
 # Viewsets
